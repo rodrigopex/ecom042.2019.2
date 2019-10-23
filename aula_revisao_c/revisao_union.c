@@ -2,6 +2,17 @@
 #include <stdio.h>
 #include <string.h>
 
+#define SET_BIT(byte, bit) byte = byte | (1 << bit)     // set the x.content[2] = 0;
+#define CLEAR_BIT(byte, bit) byte = byte & ~(1 << bit)  // set the x.content[2] = 0;
+#define GET_BIT(byte, bit) (byte << (7 - bit)) >> 7     // get the x.content[2]
+#define TOGGLE_BIT(byte, bit) byte = byte ^ (1 << bit)  // set the x.content[2] = 0;
+
+#define CHECK_CONDITION(x) \
+    do {                   \
+        if (x)             \
+            return -1;     \
+    } while (0)
+
 struct packet_s {
     uint8_t ab;
     uint8_t c;
@@ -21,6 +32,26 @@ union int_array4 {
 
 
 union int_array4 x = {0};
+
+union byte_s {
+    uint8_t content;
+    struct {
+        unsigned int low : 4;
+        unsigned int high : 4;
+    } nibble;
+    struct {
+        unsigned int bit0 : 1;
+        unsigned int bit1 : 1;
+        unsigned int bit2 : 1;
+        unsigned int bit3 : 1;
+        unsigned int bit4 : 1;
+        unsigned int bit5 : 1;
+        unsigned int bit6 : 1;
+        unsigned int bit7 : 1;
+    };
+};
+
+typedef union byte_s byte_t;
 
 struct packet_ninja_s {
     unsigned int a : 3;
@@ -56,9 +87,18 @@ int packet_ninja_init(packet_ninja_t *pkt, uint8_t a, uint8_t b, uint8_t c, uint
 
 int packet_ninja_set(packet_ninja_t *pkt, uint8_t *data, size_t size)
 {
-    if (size > 3) {
-        return -1;
-    }
+    CHECK_CONDITION(size > 3);
+    CHECK_CONDITION(size > 3);
+    CHECK_CONDITION(size > 3);
+    CHECK_CONDITION(size > 3);
+    CHECK_CONDITION(size > 3);
+    CHECK_CONDITION(size > 3);
+    CHECK_CONDITION(size > 3);
+    CHECK_CONDITION(size > 3);
+    CHECK_CONDITION(size > 3);
+    // if (size > 3) {
+    //     return -1;
+    // }
     memcpy(pkt->data + 1, data, size);
     // pkt->c = data[0];
     // pkt->d = data[1] | data[2] << 8;
@@ -97,5 +137,21 @@ int main(int argc, char const *argv[])
     packet_ninja_print(&my_pkt);
     printf("Size of normal %ld, simple %ld ,ninja %ld\n", sizeof(struct packet_s),
            sizeof(struct packet_simple_s), sizeof(struct packet_ninja_s));
+
+    byte_t x = {0xfe};
+    printf("Content %02Xh, nibble low: %Xh, high: %Xh", x.content, x.nibble.low,
+           x.nibble.high);
+    if (x.content & (1 << 2)) {
+        x.content = x.content & ~(1 << 2);  // set the x.content[2] = 0;
+        x.content = x.content | (1 << 2);   // set the x.content[2] = 1;
+        x.content = x.content ^ (1 << 2);   // toggle x.content[2]
+        CLEAR_BIT(x.content, 2);
+        SET_BIT(x.content, 2);
+        TOGGLE_BIT(x.content, 2);
+        GET_BIT(x.content, 2);
+        x.bit2 = 0;
+        x.bit2 = 1;
+        x.bit2 = ~x.bit2;
+    }
     return 0;
 }
