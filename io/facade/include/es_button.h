@@ -6,8 +6,6 @@
 #include <gpio.h>
 #include <zephyr/types.h>
 
-typedef void (*es_button_callback_t)(struct device*, struct gpio_callback*, u32_t);
-
 typedef struct button_s es_button_t;
 
 struct button_s {
@@ -16,8 +14,7 @@ struct button_s {
     u32_t pin;
 };
 
-
-es_button_t es_button_create(const char* dev_name, u32_t pin,
-                             es_button_callback_t callback);
+int es_button_create(es_button_t* button, const char* dev_name, u32_t pin,
+                     gpio_callback_handler_t callback);
 
 #endif /*_ES_BUTTON_H_*/

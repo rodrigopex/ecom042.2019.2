@@ -13,12 +13,10 @@ struct led_s {
     u8_t value;
 };
 
-es_led_t es_led_create(const char* dev_name, u32_t pin, struct k_timer* timer);
+int es_led_init(es_led_t* led, const char* dev_name, u32_t pin);
 void es_led_on(es_led_t* led);
 void es_led_expiry_function(struct k_timer* timer_id);
 void es_led_off(es_led_t* led);
 void es_led_toggle(es_led_t* led);
-void es_led_blink_start(es_led_t* led, s32_t period_ms, s32_t on_ms);
-void es_led_blink_stop(es_led_t* led);
 
 #endif  // _ES_LED_H_
