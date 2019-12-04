@@ -27,8 +27,6 @@
 void main(void)
 {
     struct device *pwm_dev;
-    u32_t pulse_width = 0U;
-    u8_t dir          = 0U;
 
     printk("PWM demo app-fade LED\n");
 
